@@ -1,0 +1,75 @@
+enum PostStatus {
+  CREATED
+  UPDATED
+  DELETED
+}
+
+enum PostType {
+  TEXT
+  TEXT_IMAGE
+}
+
+enum ChatItemType {
+  TEXT
+  IMAGE
+}
+
+type Chat @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  recieverId: String
+  senderId: String
+  createdOn: AWSDateTime
+  updatedOn: AWSDateTime
+  ChatItems: [ChatItem] @hasMany(indexName: "byChat", fields: ["id"])
+  chatUsers: [User] @manyToMany(relationName: "ChatUser")
+}
+
+type Comment @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  createdOn: AWSDateTime
+  updatedOn: AWSDateTime
+  userId: String
+  commentTest: String
+  Post: Post @hasOne
+  postID: ID! @index(name: "byPost")
+}
+
+type ChatItem @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  senderId: String
+  recieverId: String
+  massage: String
+  imagUrl: String
+  itemType: ChatItemType
+  createdOn: AWSDateTime
+  chatID: ID @index(name: "byChat")
+  Chat: Chat @belongsTo(fields: ["chatID"])
+  Chats: Chat @hasOne
+}
+
+type Post @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  Content: String
+  postImageUrl: String
+  status: PostStatus
+  CreatedO: AWSDateTime
+  UpdatedOn: AWSDateTime
+  type: PostType
+  User: User @hasOne
+  Comments: [Comment] @hasMany(indexName: "byPost", fields: ["id"])
+  userID: ID! @index(name: "byUser")
+}
+
+type User @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  username: String
+  firstname: String
+  lastname: String
+  isVerified: Boolean
+  profilePic: String
+  email: AWSEmail
+  createdOn: AWSDateTime
+  updatedOn: AWSDateTime
+  chats: [Chat] @manyToMany(relationName: "ChatUser")
+  Posts: [Post] @hasMany(indexName: "byUser", fields: ["id"])
+}

@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "paths": {
+    "/items": {
+      "name": "/items",
+      "lambdaFunction": "S3Trigger2fa1e2e8",
+      "permissions": {
+        "setting": "open"
+      }
+    }
+  }
+}
